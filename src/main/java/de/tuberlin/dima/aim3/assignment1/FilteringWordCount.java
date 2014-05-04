@@ -1,6 +1,7 @@
 package de.tuberlin.dima.aim3.assignment1;
 
 import de.tuberlin.dima.aim3.HadoopJob;
+
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
@@ -11,7 +12,9 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 public class FilteringWordCount extends HadoopJob {
 
@@ -30,9 +33,23 @@ public class FilteringWordCount extends HadoopJob {
   }
 
   static class FilteringWordCountMapper extends Mapper<Object,Text,Text,IntWritable> {
+	  
+	  static final String StopWords = "to,and,in,the";
+	  
     @Override
     protected void map(Object key, Text line, Context ctx) throws IOException, InterruptedException {
-      // IMPLEMENT ME
+    	StringTokenizer tokenizer = new StringTokenizer(line.toString(), " \t\n\r\f,", false);
+    	
+    	while(tokenizer.hasMoreTokens())
+    	{
+    		String token = tokenizer.nextToken();
+    		token = token.toLowerCase();
+    		    		
+    		if(StopWords.contains(token))
+    			continue;
+    		
+    		ctx.write(new Text(token), new IntWritable(1));
+    	}
     }
   }
 
@@ -40,7 +57,13 @@ public class FilteringWordCount extends HadoopJob {
     @Override
     protected void reduce(Text key, Iterable<IntWritable> values, Context ctx)
         throws IOException, InterruptedException {
-      // IMPLEMENT ME
+    	int result = 0;    	
+    	Iterator<IntWritable> itr = values.iterator();
+    	
+    	while(itr.hasNext())
+    		result += itr.next().get();
+    	
+    	ctx.write(key, new IntWritable(result));
     }
   }
 

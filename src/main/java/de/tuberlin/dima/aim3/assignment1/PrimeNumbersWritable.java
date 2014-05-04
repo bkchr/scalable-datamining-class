@@ -21,12 +21,22 @@ public class PrimeNumbersWritable implements Writable {
 
   @Override
   public void write(DataOutput out) throws IOException {
-    //IMPLEMENT ME
+	  int count = numbers.length;
+	  
+	  out.writeInt(count);
+	  
+	  for(int i = 0; i < count; ++i)
+		  out.writeInt(numbers[i]);
   }
 
   @Override
   public void readFields(DataInput in) throws IOException {
-    //IMPLEMENT ME
+	  int count  = in.readInt();
+	  
+	  numbers = new int[count];
+	  
+	  for(int i = 0; i < count; ++i)
+		  numbers[i] = in.readInt();
   }
 
   @Override

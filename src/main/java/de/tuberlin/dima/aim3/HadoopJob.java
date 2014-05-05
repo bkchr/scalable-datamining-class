@@ -135,7 +135,7 @@ public abstract class HadoopJob extends Configured implements Tool {
     return name.toString();
   }
 
-  private String getCustomJobName(JobContext job, Class<? extends Mapper> mapper, Class<? extends Reducer> reducer) {
+  protected String getCustomJobName(JobContext job, Class<? extends Mapper> mapper, Class<? extends Reducer> reducer) {
     StringBuilder name = new StringBuilder();
     String customJobName = job.getJobName();
     if (customJobName == null || customJobName.trim().length() == 0) {
